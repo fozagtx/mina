@@ -1,7 +1,48 @@
-.vercel
-node_modules
-package-lock.json
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+bun.lockb
+
+# Environment / secrets
 .env
+.env.*
+!.env.example
+secrets.yaml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build output
+.next/
+out/
+build/
+dist/
+.vercel
+
+# Hardhat / Solidity
+artifacts/
+cache/
+typechain-types/
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Keys / credentials
+*.pem
 *-keypair.json
-core.json
-test-bonk.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

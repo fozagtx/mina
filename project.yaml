@@ -1,0 +1,25 @@
+name: memecoin-launcher
+description: AI-powered memecoin launcher that detects viral crypto memes and deploys tokens on Base
+version: 0.1.0
+author: fozagtx
+
+capabilities:
+  - cron
+  - http
+  - evm
+
+workflows:
+  - name: memecoin-launcher
+    path: ./workflows/memecoin-launcher
+    schedule: "*/2 * * * *"  # Every 2 minutes
+    chains:
+      - base-sepolia
+      - base
+
+secrets:
+  - RAPID_API_KEY
+  - ANTHROPIC_API_KEY
+  - BASE_RPC_URL
+  - DEPLOYER_PRIVATE_KEY
+  - SUPABASE_URL
+  - SUPABASE_ANON_KEY

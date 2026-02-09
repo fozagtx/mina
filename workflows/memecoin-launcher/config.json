@@ -1,0 +1,15 @@
+{
+  "schedule": "*/2 * * * *",
+  "chainSelectorName": "base-sepolia",
+  "factoryAddress": "",
+  "gasLimit": "3000000",
+  "twitterSearchUrl": "https://twitter-api45.p.rapidapi.com/search.php",
+  "twitterSearchQuery": "crypto OR memecoin OR $",
+  "twitterSearchCount": 100,
+  "anthropicApiUrl": "https://api.anthropic.com/v1/messages",
+  "anthropicModel": "claude-sonnet-4-20250514",
+  "outlierMultiplier": 50,
+  "confidenceThreshold": 75,
+  "defaultTotalSupply": "1000000000000000000000000000",
+  "supabaseTable": "cre_launches"
+}

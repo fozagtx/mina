@@ -1,0 +1,27 @@
+name: memecoin-launcher
+description: Detects viral crypto memes on Twitter and deploys memecoin contracts on Base
+version: 0.1.0
+
+trigger:
+  type: cron
+  schedule: "*/2 * * * *"
+
+capabilities:
+  - http
+  - evm
+
+chains:
+  - family: evm
+    name: base-sepolia
+    testnet: true
+
+config:
+  path: ./config.json
+
+secrets:
+  - RAPID_API_KEY
+  - ANTHROPIC_API_KEY
+  - BASE_RPC_URL
+  - DEPLOYER_PRIVATE_KEY
+  - SUPABASE_URL
+  - SUPABASE_ANON_KEY
