@@ -6,81 +6,96 @@ Built for the **Chainlink CRE & AI Hackathon**.
 
 ## Architecture
 
-```
-                    Chainlink DON (Decentralized Oracle Network)
-┌──────────────────────────────────────────────────────────────────────┐
-│                                                                      │
-│  ⏰ Cron        🐦 Fetch         📊 Detect        🧠 Claude         │
-│  Trigger ──→  Tweets via  ──→  Outlier    ──→  Analysis    ──→ ...  │
-│  (2 min)     RapidAPI          (50x+ views)    (confidence)          │
-│                                                                      │
-│  ... ──→  🚀 Deploy Token  ──→  💾 Log to Supabase                  │
-│           Factory on Base       (cre_launches table)                 │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-              ┌─────────────────────┐
-              │  Next.js Dashboard  │
-              │  (reads Supabase)   │
-              └─────────────────────┘
+```mermaid
+flowchart LR
+    subgraph DON["Chainlink DON"]
+        direction LR
+        A["Cron Trigger\n(2 min)"] --> B["Fetch Tweets\nvia RapidAPI"]
+        B --> C["Detect Outlier\n(50x+ views)"]
+        C --> D["Claude Analysis\n(confidence)"]
+        D --> E["Deploy Token\nFactory on Base"]
+        E --> F["Log to Supabase\n(cre_launches)"]
+    end
+
+    F --> G["Next.js Dashboard\n(reads Supabase)"]
 ```
 
 ### Pipeline Steps
 
-| Step | Action | Tool |
-|------|--------|------|
-| 1 | Cron trigger fires every 2 minutes | CRE CronCapability |
-| 2 | Fetch 100 crypto tweets | HTTPClient → RapidAPI |
-| 3 | Detect viral outlier (50x+ views vs median) | Pure computation |
-| 4 | AI analysis via Claude (name, symbol, confidence) | HTTPClient → Anthropic API |
-| 5 | Deploy ERC20 token via factory contract | EVMClient → Base |
-| 6 | Log result to Supabase | HTTPClient → Supabase REST |
+```mermaid
+flowchart TD
+    S1["1. Cron trigger fires every 2 min\n(CRE CronCapability)"]
+    S2["2. Fetch 100 crypto tweets\n(HTTPClient -> RapidAPI)"]
+    S3["3. Detect viral outlier\n(50x+ views vs median)"]
+    S4["4. AI analysis via Claude\n(HTTPClient -> Anthropic API)"]
+    S5["5. Deploy ERC20 token\n(EVMClient -> Base)"]
+    S6["6. Log result to Supabase\n(HTTPClient -> Supabase REST)"]
+
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6
+```
 
 ### Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Workflow Runtime | Chainlink CRE (TypeScript → WASM via QuickJS) |
-| Smart Contract | Solidity (ERC20 factory + anti-whale) |
-| Blockchain | Base Sepolia / Base Mainnet |
-| AI Analysis | Claude Sonnet (via Anthropic API) |
-| Tweet Source | RapidAPI Twitter endpoint |
-| Database | Supabase (PostgreSQL) |
-| Frontend | Next.js 14, TanStack Query, Tailwind |
+```mermaid
+graph TD
+    subgraph Runtime["Workflow Runtime"]
+        CRE["Chainlink CRE\n(TypeScript -> WASM via QuickJS)"]
+    end
+
+    subgraph Blockchain["Blockchain Layer"]
+        SC["Solidity\nERC20 factory + anti-whale"]
+        BASE["Base Sepolia / Mainnet"]
+    end
+
+    subgraph AI["AI Layer"]
+        CLAUDE["Claude Sonnet\n(Anthropic API)"]
+    end
+
+    subgraph Data["Data Sources"]
+        TWITTER["RapidAPI\nTwitter endpoint"]
+        SUPA["Supabase\n(PostgreSQL)"]
+    end
+
+    subgraph Frontend["Frontend"]
+        NEXT["Next.js 14\nTanStack Query, Tailwind"]
+    end
+
+    CRE --> TWITTER
+    CRE --> CLAUDE
+    CRE --> SC
+    SC --> BASE
+    CRE --> SUPA
+    NEXT --> SUPA
+```
 
 ## Project Structure
 
-```
-mina/
-├── project.yaml                    # CRE project config
-├── secrets.yaml                    # Secret declarations (gitignored)
-├── contracts/                      # Hardhat project
-│   ├── hardhat.config.ts           # Hardhat config (Base Sepolia + Mainnet)
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── contracts/
-│   │   └── MemecoinFactory.sol     # ERC20 factory with anti-whale
-│   ├── scripts/
-│   │   └── deploy.ts              # Deployment script
-│   └── test/
-│       └── MemecoinFactory.test.ts # Contract tests
-├── workflows/
-│   └── memecoin-launcher/
-│       ├── main.ts                 # Core CRE workflow (6-step pipeline)
-│       ├── workflow.yaml            # Workflow metadata
-│       ├── config.json              # Runtime config
-│       ├── package.json
-│       └── tsconfig.json
-└── frontend/
-    ├── app/
-    │   ├── layout.tsx
-    │   ├── page.tsx                # Landing page with pipeline viz
-    │   └── api/launches/route.ts
-    ├── components/launcher/        # Dashboard components
-    ├── lib/                        # Supabase client, utils
-    ├── package.json
-    └── tailwind.config.ts
+```mermaid
+graph TD
+    ROOT["mina/"] --> PY["project.yaml"]
+    ROOT --> SY["secrets.yaml (gitignored)"]
+    ROOT --> VJ["vercel.json"]
+    ROOT --> CONTRACTS["contracts/"]
+    ROOT --> WORKFLOWS["workflows/"]
+    ROOT --> FE["frontend/"]
+
+    CONTRACTS --> HC["hardhat.config.ts"]
+    CONTRACTS --> SOL["contracts/MemecoinFactory.sol"]
+    CONTRACTS --> SCRIPTS["scripts/deploy.ts"]
+    CONTRACTS --> TESTS["test/MemecoinFactory.test.ts"]
+
+    WORKFLOWS --> ML["memecoin-launcher/"]
+    ML --> MAIN["main.ts (6-step pipeline)"]
+    ML --> WY["workflow.yaml"]
+    ML --> CFG["config.json"]
+
+    FE --> APP["app/"]
+    APP --> LAYOUT["layout.tsx"]
+    APP --> PAGE["page.tsx (landing)"]
+    APP --> API["api/launches/route.ts"]
+    FE --> COMP["components/launcher/"]
+    FE --> LIB["lib/ (Supabase, utils)"]
+    FE --> TW["tailwind.config.ts"]
 ```
 
 ## Setup
@@ -178,6 +193,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### 8. Deploy to Vercel
+
+The project includes a `vercel.json` that points to the `frontend/` directory. To deploy:
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy from the project root
+vercel
+```
+
+Set the following environment variables in the Vercel dashboard:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
 ## Smart Contract
 
 **MemecoinFactory.sol** deploys `ViralMemecoin` ERC20 tokens with:
@@ -200,12 +231,28 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Demo
 
-1. CRE workflow triggers on cron schedule
-2. Fetches 100 crypto tweets, finds viral outlier
-3. Claude analyzes the meme and generates token metadata
-4. If confidence >= 75%, deploys ERC20 on Base via factory
-5. Logs all results to Supabase
-6. Dashboard shows live feed of launches
+```mermaid
+sequenceDiagram
+    participant CRE as CRE Workflow
+    participant TW as Twitter (RapidAPI)
+    participant AI as Claude AI
+    participant BC as Base Blockchain
+    participant DB as Supabase
+    participant UI as Next.js Dashboard
+
+    CRE->>TW: Fetch 100 crypto tweets
+    TW-->>CRE: Tweet data
+    CRE->>CRE: Detect viral outlier (50x+ views)
+    CRE->>AI: Analyze meme, generate token metadata
+    AI-->>CRE: Name, symbol, confidence score
+    alt confidence >= 75%
+        CRE->>BC: Deploy ERC20 via factory
+        BC-->>CRE: Token address, tx hash
+    end
+    CRE->>DB: Log result (launched / rejected / no_outlier)
+    UI->>DB: Poll for new launches
+    DB-->>UI: Live feed data
+```
 
 ## Author
 
