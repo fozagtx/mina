@@ -27,7 +27,7 @@ const steps = [
   },
   {
     num: 4,
-    label: "Claude Analysis",
+    label: "OpenAI Analysis",
     desc: "AI confidence scoring",
     icon: "🧠",
     color: "from-purple-500/20 to-purple-600/20",

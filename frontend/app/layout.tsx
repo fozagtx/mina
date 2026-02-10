@@ -5,7 +5,7 @@ import { Providers } from "./providers"
 export const metadata: Metadata = {
   title: "Mina - Autonomous Memecoin Deployment on Base",
   description:
-    "AI agent that detects viral crypto memes on X and launches tokens in 2 minutes. Powered by Chainlink CRE, Claude AI, and Base blockchain.",
+    "AI agent that detects viral crypto memes on X and launches tokens in 2 minutes. Powered by Chainlink CRE, OpenAI, and Base blockchain.",
 }
 
 export default function RootLayout({

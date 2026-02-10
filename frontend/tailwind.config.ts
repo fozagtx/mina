@@ -29,7 +29,7 @@ const config: Config = {
         accent: {
           viral: "#FF00E5",
           warning: "#FFB800",
-          claude: "#8B5CF6",
+          openai: "#10A37F",
           green: "#10B981",
         },
         neutral: {
@@ -75,14 +75,14 @@ const config: Config = {
           "linear-gradient(180deg, rgba(0, 217, 255, 0.05) 0%, rgba(0, 255, 157, 0.05) 100%)",
         "gradient-cta": "linear-gradient(90deg, #00FF9D 0%, #00D9FF 100%)",
         "gradient-text":
-          "linear-gradient(90deg, #00FF9D 0%, #00D9FF 50%, #8B5CF6 100%)",
+          "linear-gradient(90deg, #00FF9D 0%, #00D9FF 50%, #10A37F 100%)",
       },
       boxShadow: {
         glow: "0 0 20px rgba(0, 255, 157, 0.5)",
         "glow-sm": "0 0 10px rgba(0, 255, 157, 0.3)",
         "glow-cyan": "0 0 20px rgba(0, 217, 255, 0.5)",
         "glow-pink": "0 0 20px rgba(255, 0, 229, 0.5)",
-        "glow-purple": "0 0 20px rgba(139, 92, 246, 0.5)",
+        "glow-openai": "0 0 20px rgba(16, 163, 127, 0.5)",
       },
       animation: {
         "pulse-glow": "pulseGlow 2s ease-in-out infinite",

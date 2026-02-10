@@ -29,8 +29,8 @@ const configSchema = z.object({
   twitterSearchUrl: z.string(),
   twitterSearchQuery: z.string(),
   twitterSearchCount: z.number(),
-  anthropicApiUrl: z.string(),
-  anthropicModel: z.string(),
+  openaiApiUrl: z.string(),
+  openaiModel: z.string(),
   outlierMultiplier: z.number(),
   confidenceThreshold: z.number(),
   defaultTotalSupply: z.string(),
@@ -57,7 +57,7 @@ type OutlierResult = {
   multiplier: number
 }
 
-type ClaudeAnalysis = {
+type AIAnalysis = {
   tokenName: string
   tokenSymbol: string
   confidence: number
@@ -70,7 +70,7 @@ type ClaudeAnalysis = {
 type LaunchResult = {
   status: "launched" | "rejected" | "no_outlier" | "error"
   tweet: Tweet | null
-  analysis: ClaudeAnalysis | null
+  analysis: AIAnalysis | null
   txHash: string
   tokenAddress: string
 }
@@ -178,13 +178,13 @@ const detectOutlier = (
   return { found: false, tweet: null, medianViews, multiplier: bestMultiplier }
 }
 
-// ─── Step 3: Analyze with Claude ─────────────────────────────────────────────
+// ─── Step 3: Analyze with OpenAI ─────────────────────────────────────────────
 
-const analyzeWithClaude = (
+const analyzeWithOpenAI = (
   nodeRuntime: NodeRuntime<Config>,
   tweet: Tweet,
   multiplier: number
-): ClaudeAnalysis => {
+): AIAnalysis => {
   const httpClient = new HTTPClient()
   const secrets = nodeRuntime.secrets
 
@@ -209,40 +209,39 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 }`
 
   const requestBody = JSON.stringify({
-    model: nodeRuntime.config.anthropicModel,
+    model: nodeRuntime.config.openaiModel,
     max_tokens: 500,
     messages: [{ role: "user", content: prompt }],
   })
 
   const resp = httpClient
     .sendRequest(nodeRuntime, {
-      url: nodeRuntime.config.anthropicApiUrl,
+      url: nodeRuntime.config.openaiApiUrl,
       method: "POST" as const,
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": secrets.get("ANTHROPIC_API_KEY") || "",
-        "anthropic-version": "2023-06-01",
+        Authorization: `Bearer ${secrets.get("OPENAI_API_KEY") || ""}`,
       },
       body: new TextEncoder().encode(requestBody),
     })
     .result()
 
   if (resp.statusCode !== 200) {
-    throw new Error(`Anthropic API returned status ${resp.statusCode}`)
+    throw new Error(`OpenAI API returned status ${resp.statusCode}`)
   }
 
   const bodyText = new TextDecoder().decode(resp.body)
   const apiResponse = JSON.parse(bodyText)
-  const content = apiResponse.content?.[0]?.text || ""
+  const content = apiResponse.choices?.[0]?.message?.content || ""
 
-  return JSON.parse(content) as ClaudeAnalysis
+  return JSON.parse(content) as AIAnalysis
 }
 
 // ─── Step 4: Deploy Token ────────────────────────────────────────────────────
 
 const deployToken = (
   runtime: Runtime<Config>,
-  analysis: ClaudeAnalysis,
+  analysis: AIAnalysis,
   tweet: Tweet
 ): { txHash: string } => {
   const network = getNetwork({
@@ -396,17 +395,17 @@ const onCronTrigger = (runtime: Runtime<Config>): string => {
     `Outlier found! "${outlier.tweet.text.substring(0, 50)}..." - ${outlier.multiplier.toFixed(1)}x multiplier`
   )
 
-  // Step 3: Analyze with Claude (runs in node mode for HTTP)
+  // Step 3: Analyze with OpenAI (runs in node mode for HTTP)
   const analysis = runtime
     .runInNodeMode(
       (nr: NodeRuntime<Config>) =>
-        analyzeWithClaude(nr, outlier.tweet!, outlier.multiplier),
+        analyzeWithOpenAI(nr, outlier.tweet!, outlier.multiplier),
       { mode: "first" as any }
     )()
     .result()
 
   runtime.log(
-    `Claude analysis: ${analysis.tokenName} ($${analysis.tokenSymbol}) - Confidence: ${analysis.confidence}%`
+    `OpenAI analysis: ${analysis.tokenName} ($${analysis.tokenSymbol}) - Confidence: ${analysis.confidence}%`
   )
 
   // Step 4: Decision gate

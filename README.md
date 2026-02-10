@@ -12,7 +12,7 @@ flowchart LR
         direction LR
         A["Cron Trigger\n(2 min)"] --> B["Fetch Tweets\nvia RapidAPI"]
         B --> C["Detect Outlier\n(50x+ views)"]
-        C --> D["Claude Analysis\n(confidence)"]
+        C --> D["OpenAI Analysis\n(confidence)"]
         D --> E["Deploy Token\nFactory on Base"]
         E --> F["Log to Supabase\n(cre_launches)"]
     end
@@ -27,7 +27,7 @@ flowchart TD
     S1["1. Cron trigger fires every 2 min\n(CRE CronCapability)"]
     S2["2. Fetch 100 crypto tweets\n(HTTPClient -> RapidAPI)"]
     S3["3. Detect viral outlier\n(50x+ views vs median)"]
-    S4["4. AI analysis via Claude\n(HTTPClient -> Anthropic API)"]
+    S4["4. AI analysis via OpenAI\n(HTTPClient -> OpenAI API)"]
     S5["5. Deploy ERC20 token\n(EVMClient -> Base)"]
     S6["6. Log result to Supabase\n(HTTPClient -> Supabase REST)"]
 
@@ -48,7 +48,7 @@ graph TD
     end
 
     subgraph AI["AI Layer"]
-        CLAUDE["Claude Sonnet\n(Anthropic API)"]
+        GPT["GPT-4o\n(OpenAI API)"]
     end
 
     subgraph Data["Data Sources"]
@@ -61,7 +61,7 @@ graph TD
     end
 
     CRE --> TWITTER
-    CRE --> CLAUDE
+    CRE --> GPT
     CRE --> SC
     SC --> BASE
     CRE --> SUPA
@@ -106,7 +106,7 @@ graph TD
 - [CRE CLI](https://docs.chain.link/cre) installed
 - Supabase project
 - RapidAPI key (Twitter endpoint)
-- Anthropic API key
+- OpenAI API key
 - Base Sepolia RPC URL + funded deployer wallet
 
 ### 1. Install dependencies
@@ -235,7 +235,7 @@ Set the following environment variables in the Vercel dashboard:
 sequenceDiagram
     participant CRE as CRE Workflow
     participant TW as Twitter (RapidAPI)
-    participant AI as Claude AI
+    participant AI as OpenAI GPT
     participant BC as Base Blockchain
     participant DB as Supabase
     participant UI as Next.js Dashboard

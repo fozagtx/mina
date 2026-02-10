@@ -475,7 +475,7 @@ function HeroSection() {
           {/* Supporting copy */}
           <p className="mx-auto mt-4 max-w-2xl text-sm text-neutral-400">
             Every 2 minutes, Mina scans 100 crypto tweets, identifies 50x viral
-            outliers, analyzes with Claude AI, and deploys ERC20 tokens on Base.
+            outliers, analyzes with OpenAI, and deploys ERC20 tokens on Base.
             Powered by Chainlink CRE. Built for degens who move at the speed of
             memes.
           </p>
@@ -549,11 +549,11 @@ function PipelineSection() {
     },
     {
       icon: BrainIcon,
-      title: "Claude Analysis",
-      body: "Claude Sonnet analyzes meme potential, generates token name/symbol, and assigns confidence score (0\u2013100).",
-      color: "text-accent-claude",
-      borderColor: "border-accent-claude/30",
-      bgColor: "bg-accent-claude/5",
+      title: "OpenAI Analysis",
+      body: "GPT-4o analyzes meme potential, generates token name/symbol, and assigns confidence score (0\u2013100).",
+      color: "text-accent-openai",
+      borderColor: "border-accent-openai/30",
+      bgColor: "bg-accent-openai/5",
     },
     {
       icon: RocketIcon,
@@ -641,8 +641,8 @@ function TechStackSection() {
     },
     {
       icon: BrainIcon,
-      title: "Claude Sonnet AI",
-      body: "State-of-the-art LLM analyzes tweet sentiment, virality signals, and meme quality. The brain behind the tokens.",
+      title: "OpenAI GPT-4o",
+      body: "State-of-the-art GPT-4o analyzes tweet sentiment, virality signals, and meme quality. The brain behind the tokens.",
     },
     {
       icon: CodeIcon,
@@ -848,7 +848,7 @@ function UseCasesSection() {
     <section className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="font-display text-xs uppercase tracking-widest text-accent-claude">
+          <p className="font-display text-xs uppercase tracking-widest text-accent-openai">
             Audience
           </p>
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
@@ -862,8 +862,8 @@ function UseCasesSection() {
             return (
               <div key={c.headline} className="card-base p-6">
                 <div className="mb-4 flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-accent-claude" />
-                  <span className="rounded-full border border-accent-claude/20 bg-accent-claude/5 px-3 py-0.5 font-mono text-xs text-accent-claude">
+                  <Icon className="h-5 w-5 text-accent-openai" />
+                  <span className="rounded-full border border-accent-openai/20 bg-accent-openai/5 px-3 py-0.5 font-mono text-xs text-accent-openai">
                     {c.tag}
                   </span>
                 </div>
@@ -891,7 +891,7 @@ function ArchitectureSection() {
     { num: "01", text: "Cron trigger activates every 2 minutes" },
     { num: "02", text: "HTTP client fetches tweets via RapidAPI" },
     { num: "03", text: "Pure computation detects 50x+ outlier" },
-    { num: "04", text: "HTTP client calls Claude API for analysis" },
+    { num: "04", text: "HTTP client calls OpenAI API for analysis" },
     { num: "05", text: "EVM client deploys token to Base blockchain" },
     { num: "06", text: "HTTP client logs results to Supabase" },
   ]
@@ -959,7 +959,7 @@ function FAQSection() {
   const faqs = [
     {
       q: "How do you prevent spam or malicious tokens?",
-      a: "Two-layer filter: (1) 50x outlier detection ensures only genuinely viral tweets qualify, and (2) Claude AI confidence threshold of 75%+ filters low-quality memes. Plus all metadata is on-chain for transparency.",
+      a: "Two-layer filter: (1) 50x outlier detection ensures only genuinely viral tweets qualify, and (2) AI confidence threshold of 75%+ filters low-quality memes. Plus all metadata is on-chain for transparency.",
     },
     {
       q: "What happens if a tweet isn't viral enough?",
@@ -975,7 +975,7 @@ function FAQSection() {
     },
     {
       q: "How much does it cost to run?",
-      a: "Gas fees on Base are <$0.01 per deploy. Chainlink CRE handles compute. RapidAPI + Claude API costs ~$0.05 per cycle. Extremely efficient.",
+      a: "Gas fees on Base are <$0.01 per deploy. Chainlink CRE handles compute. RapidAPI + OpenAI API costs ~$0.05 per cycle. Extremely efficient.",
     },
     {
       q: "Can I fork this for my own use?",
